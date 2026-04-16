@@ -6,10 +6,8 @@ import requests
 from dotenv import load_dotenv
 from typing import List, Dict, Optional
 
-# --- Configuration ---
 load_dotenv()
 
-# --- Data Collection Logic (Functional) ---
 
 def get_api_credentials() -> Optional[Dict[str, str]]:
     """Retrieves Algolia credentials from environment variables."""
@@ -62,7 +60,7 @@ def collect_data(creds: Dict[str, str], founders_code: bool, min_revenue: int, m
     
     print(f"[*] Starting collection | Filters: [{filters if filters else 'None'}]")
     
-    # We use a session for connection pooling and slightly better performance
+    
     with requests.Session() as session:
         session.headers.update({
             "X-Algolia-API-Key": creds["api_key"],
@@ -84,10 +82,8 @@ def collect_data(creds: Dict[str, str], founders_code: bool, min_revenue: int, m
             all_hits.extend(hits)
             print(f"[+] Processing page {page} | Found {len(hits)} items.")
             
-            # Respectful delay between requests
             time.sleep(1)
             
-            # Stop if we hit the total number of pages available
             if page >= data.get("nbPages", 0) - 1:
                 print("[*] Reached the last possible page in Algolia.")
                 break
@@ -118,7 +114,6 @@ def export_results(hits: List[Dict], output_file: str):
     except Exception as e:
         print(f"[!] Export failed during file writing: {e}")
 
-# --- CLI Entry Point ---
 
 def main():
     """Main execution function that handles CLI arguments."""
@@ -133,12 +128,10 @@ def main():
     
     args = parser.parse_args()
     
-    # Load and validate credentials layer
     creds = get_api_credentials()
     if not creds:
         return
 
-    # Execute main workflow
     results = collect_data(
         creds=creds,
         founders_code=not args.no_code,
